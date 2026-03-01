@@ -8,6 +8,8 @@ function SocialLink({ svg, url, label }) {
       rel='noopener noreferrer'
       className='
         group
+        inline-block
+        w-20
         text-center
         text-sm
         opacity-30
@@ -30,6 +32,7 @@ function SocialLink({ svg, url, label }) {
 
       <span
         className='
+          block
           transition-colors
           duration-300
           group-hover:text-text

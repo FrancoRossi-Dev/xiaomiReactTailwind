@@ -1,6 +1,5 @@
-@import 'tailwindcss';
 /* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap'); */
-
+/* 
 :root[data-theme='dark'] {
   --color-bg: hsl(0, 0%, 5%);
   --color-text: hsl(210, 12%, 94%);
@@ -48,6 +47,71 @@
 
 body {
   font-size: var(--text-txt);
+} */
+
+@import 'tailwindcss';
+
+:root {
+  --width-max: 1280px;
+
+  /* Default (dark) theme */
+  --color-bg: hsl(0, 0%, 5%);
+  --color-text: hsl(210, 12%, 94%);
+  --color-primary: hsl(185, 67%, 55%);
+  --color-accent: hsl(25, 100%, 50%);
+  --color-accent-hover: hsl(31, 98%, 53%);
+
+  /* Typography */
+  --text-h1: 2rem;
+  --text-h2: 2rem;
+  --text-h3: 1.5rem;
+  --text-txt: 1rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --text-h1: 2.5rem;
+    --text-h2: 2rem;
+    --text-h3: 1.5rem;
+    --text-txt: 1rem;
+  }
+}
+
+:root[data-theme='light'] {
+  --color-bg: hsl(0, 0%, 98%);
+  --color-text: hsl(210, 15%, 10%);
+  --color-primary: hsl(185, 67%, 45%);
+  --color-accent: hsl(25, 95%, 45%);
+  --color-accent-hover: hsl(25, 100%, 40%);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --color-bg: hsl(0, 0%, 98%);
+    --color-text: hsl(210, 15%, 10%);
+    --color-primary: hsl(185, 67%, 45%);
+    --color-accent: hsl(25, 95%, 45%);
+    --color-accent-hover: hsl(25, 100%, 40%);
+  }
+}
+
+@theme {
+  --color-bg: var(--color-bg);
+  --color-text: var(--color-text);
+  --color-primary: var(--color-primary);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--text-txt);
+  font-family: 'DM Sans', sans-serif;
 }
 
 h1 {

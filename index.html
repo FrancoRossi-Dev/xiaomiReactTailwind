@@ -1,11 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TailwindLab</title>
-    <link href="/src/style.css" rel="stylesheet" />
+    <title>Xiaomi</title>
+
+    <script>
+      (function () {
+        const theme =
+          localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
+    <style>
+      :root {
+        --color-bg: hsl(0, 0%, 5%);
+        --color-text: hsl(210, 12%, 94%);
+      }
+
+      :root[data-theme='light'] {
+        --color-bg: hsl(0, 0%, 98%);
+        --color-text: hsl(210, 15%, 10%);
+      }
+
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        margin: 0;
+      }
+    </style>
   </head>
   <body class="bg-bg text-text font-sans transition-colors duration-300 ease-in-out">
     <div id="root"></div>

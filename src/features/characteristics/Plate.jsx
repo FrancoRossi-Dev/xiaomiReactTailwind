@@ -1,8 +1,16 @@
-import { motion, useAnimationControls } from 'motion/react';
-import { useEffect } from 'react';
+import { motion, useAnimationControls } from "motion/react";
+import { useEffect, useState } from "react";
 
-function Plate({ title, description, svg }) {
+function Plate({ title, description, svg, mobileVer = false }) {
+  const [isOpen, setIsOpen] = useState(mobileVer ? false : true);
+
   const controls = useAnimationControls();
+
+  function handleClick() {
+    console.log(isOpen);
+    if (!mobileVer) return;
+    setIsOpen(!isOpen);
+  }
 
   const handleHoverStart = () => {
     controls.start({ opacity: 1, transition: { duration: 0.2 } });
@@ -14,7 +22,7 @@ function Plate({ title, description, svg }) {
       transition: {
         duration: 4,
         repeat: Infinity,
-        repeatType: 'loop',
+        repeatType: "loop",
       },
     });
   };
@@ -25,21 +33,23 @@ function Plate({ title, description, svg }) {
       transition: {
         duration: 4,
         repeat: Infinity,
-        repeatType: 'loop',
+        repeatType: "loop",
       },
     });
   }, [controls]);
 
   return (
     <motion.article
-      className='styled-container h-40'
+      className="styled-container w-[80dvw] md:min-h-40 md:w-auto"
       animate={controls}
       onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}>
+      onHoverEnd={handleHoverEnd}
+      onClick={handleClick}
+    >
       <img src={svg} />
       <div>
         <h3>{title}</h3>
-        <p>{description}</p>
+        {isOpen && <p>{description}</p>}
       </div>
     </motion.article>
   );

@@ -8,7 +8,7 @@ function ChangeTheme() {
     <button
       onClick={handleThemeChange}
       className='px-4 py-2 rounded bg-primary text-bg font-bold transition-colors hover:bg-accent'>
-      Toggle Theme
+      t
     </button>
   );
 }
