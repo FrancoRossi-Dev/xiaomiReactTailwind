@@ -89,3 +89,25 @@ export const LOCATIONDATA_BODY = [
     direction: "Punta Shopping, Nivel 3, Local 311",
   },
 ];
+
+export const departments = [
+  { value: "montevideo", label: "Montevideo" },
+  { value: "artigas", label: "Artigas" },
+  { value: "canelones", label: "Canelones" },
+  { value: "cerro_largo", label: "Cerro Largo" },
+  { value: "colonia", label: "Colonia" },
+  { value: "durazno", label: "Durazno" },
+  { value: "flores", label: "Flores" },
+  { value: "florida", label: "Florida" },
+  { value: "lavalleja", label: "Lavalleja" },
+  { value: "maldonado", label: "Maldonado" },
+  { value: "paysandu", label: "Paysandú" },
+  { value: "rio_negro", label: "Río Negro" },
+  { value: "rivera", label: "Rivera" },
+  { value: "rocha", label: "Rocha" },
+  { value: "salto", label: "Salto" },
+  { value: "san_jose", label: "San José" },
+  { value: "soriano", label: "Soriano" },
+  { value: "tacuarembo", label: "Tacuarembó" },
+  { value: "treinta_y_tres", label: "Treinta y Tres" },
+];

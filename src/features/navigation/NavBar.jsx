@@ -55,7 +55,7 @@ function NavBar() {
         }
         transition={{ duration: 0.25, ease: "easeOut" }}
       >
-        <Logo cn="h-20 py-2 md:h-8" />
+        <Logo cn="h-20 py-2 md:h-15" />
       </motion.a>
 
       <nav>

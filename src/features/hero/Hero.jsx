@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect } from "react";
 
 import Section from "../../shared/Section";
 import Button from "../../shared/Button";
@@ -6,10 +7,69 @@ import Button from "../../shared/Button";
 import x5MaxImage from "../../assets/x-5max.png";
 import heroImage from "../../assets/bg-images/bg-hero.jpg";
 
+const container = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.18,
+      delayChildren: 0.35,
+    },
+  },
+};
+
+const card = {
+  hidden: { opacity: 0, y: 40 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  },
+};
+
+const scooterEntrance = {
+  hidden: { opacity: 0, x: 120, scale: 0.92 },
+  show: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 90,
+      damping: 18,
+    },
+  },
+};
+
 function Hero() {
   function handleCTA() {
     alert("cta clicked");
   }
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateY = useTransform(mouseX, [-500, 500], [-5, 5]);
+  const rotateX = useTransform(mouseY, [-500, 500], [5, -5]);
+
+  const moveX = useTransform(mouseX, [-500, 500], [-18, 18]);
+  const moveY = useTransform(mouseY, [-500, 500], [-10, 10]);
+
+  useEffect(() => {
+    function handleMove(e) {
+      const x = e.clientX - window.innerWidth / 2;
+      const y = e.clientY - window.innerHeight / 2;
+
+      mouseX.set(x);
+      mouseY.set(y);
+    }
+
+    window.addEventListener("mousemove", handleMove);
+
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
 
   return (
     <Section
@@ -19,38 +79,82 @@ function Hero() {
       contentClassName="group flex w-full flex-col items-center justify-center text-center md:flex-row"
     >
       <motion.div
-        className="mt-10 space-y-4 rounded-2xl border border-white/10 bg-black/10 p-8 shadow-[0_0_5px_5px_rgba(0,234,255,0.086)] backdrop-blur-sm transition-all duration-300 **:transition-all **:duration-300 group-hover:bg-black/20 group-hover:shadow-[0_0_10px_6px_rgba(0,234,255,0.18)] md:mt-0 md:max-w-100"
-        initial={{ opacity: 0, filter: "brightness(0.3)" }}
-        animate={{ opacity: 1, filter: "brightness(1)" }}
-        transition={{
-          duration: 1.2,
-          ease: "easeOut",
-          delay: 0.5,
-        }}
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="flex w-full flex-col items-center perspective-[1200px] md:flex-row"
       >
-        <h1 className="group-hover:text-primary m-0">Xiaomi 5 max</h1>
+        {/* CARD */}
 
-        <p>
-          <span className="group-hover:text-primary font-bold">
-            Explora nuevos destinos con total libertad:
-          </span>{" "}
-          llega más lejos, con una suavidad incomparable y el respaldo de una
-          tecnología pensada para acompañarte en cada kilómetro.
-        </p>
+        <motion.div
+          variants={card}
+          className="mt-10 space-y-4 rounded-2xl border border-white/10 bg-black/20 p-8 shadow-[0_0_8px_rgba(0,234,255,0.12)] backdrop-blur-sm transition-colors duration-300 group-hover:bg-black/30 md:-mt-50 md:max-w-100"
+        >
+          <h1 className="group-hover:text-primary m-0 transition-colors duration-300">
+            Xiaomi 5 max
+          </h1>
 
-        <Button onClick={handleCTA} id="cta">
-          Comenzar mi viaje
-        </Button>
+          <p>
+            <span className="group-hover:text-primary font-bold transition-colors duration-300">
+              Explora nuevos destinos con total libertad:
+            </span>{" "}
+            llega más lejos, con una suavidad incomparable y el respaldo de una
+            tecnología pensada para acompañarte en cada kilómetro.
+          </p>
+
+          <Button onClick={handleCTA} id="cta">
+            Comenzar mi viaje
+          </Button>
+        </motion.div>
+
+        {/* SCOOTER AREA */}
+
+        <motion.div
+          variants={scooterEntrance}
+          className="relative z-10 -mt-30 ml-40 flex items-center justify-center md:mt-0 md:-ml-40"
+          style={{
+            rotateX,
+            rotateY,
+            x: moveX,
+            y: moveY,
+          }}
+        >
+          {/* ELECTRIC GLOW */}
+
+          <motion.div
+            className="absolute bottom-2 h-16 w-[60%] rounded-full blur-2xl"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(0,234,255,0.8) 0%, rgba(0,234,255,0.25) 40%, rgba(0,234,255,0) 70%)",
+            }}
+            animate={{
+              scale: [1, 1.15, 1],
+              opacity: [0.7, 1, 0.7],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          {/* SCOOTER */}
+
+          <motion.img
+            src={x5MaxImage}
+            alt="Imagen del monopatín eléctrico xiaomi 5 max"
+            className="relative h-[40vh] transform-gpu opacity-95 md:h-[75vh]"
+            animate={{
+              y: [0, -6, 0],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        </motion.div>
       </motion.div>
-
-      <motion.img
-        src={x5MaxImage}
-        alt="Imagen del monopatín eléctrico xiaomi 5 max"
-        className="z-10 -mt-30 ml-40 h-[40vh] opacity-85 transition-opacity duration-300 group-hover:opacity-100 md:mt-0 md:h-[75vh]"
-        initial={{ opacity: 0, x: 100, scale: 0.7 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      />
     </Section>
   );
 }

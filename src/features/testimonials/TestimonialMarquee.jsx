@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useAnimationFrame } from "motion/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Testimonial from "./Testimonial";
 
 import pfpUrl1 from "@/assets/testimonial/pfp1.jpg";
@@ -110,63 +110,114 @@ const testimonials = [
     pfpUrl: pfpUrl15,
   },
 ];
-
 function TestimonialMarquee() {
-  const [isPaused, setIsPaused] = useState(false);
-  const x = useMotionValue(200);
+  const x = useMotionValue(0);
   const containerRef = useRef(null);
+  const isPaused = useRef(false);
+  const speedRef = useRef(0.05);
 
-  useAnimationFrame((t, delta) => {
-    if (!isPaused && containerRef.current) {
-      const newX = x.get() - 1;
-      const containerWidth = containerRef.current.scrollWidth / 2;
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const lastX = useRef(0);
 
-      if (Math.abs(newX) >= containerWidth) {
-        x.set(0);
-      } else {
-        x.set(newX);
-      }
+  // Breakpoint speed detection
+  useEffect(() => {
+    function updateSpeed() {
+      const width = window.innerWidth;
+
+      if (width < 640) speedRef.current = 0.025;
+      else if (width < 1024) speedRef.current = 0.04;
+      else speedRef.current = 0.06;
+    }
+
+    updateSpeed();
+    window.addEventListener("resize", updateSpeed);
+    return () => window.removeEventListener("resize", updateSpeed);
+  }, []);
+
+  // Infinite auto scroll
+  useAnimationFrame((_, delta) => {
+    if (!containerRef.current || isPaused.current || isDragging.current) return;
+
+    const containerWidth = containerRef.current.scrollWidth / 2;
+    const moveBy = delta * speedRef.current;
+    const newX = x.get() - moveBy;
+
+    if (Math.abs(newX) >= containerWidth) {
+      x.set(0);
+    } else {
+      x.set(newX);
     }
   });
 
-  return (
-    <motion.div
-      className="relative overflow-hidden py-8"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ ease: "easeIn", duration: 2 }}
-    >
-      <div className="from-bg pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-75 bg-gradient-to-r to-transparent" />
+  // Normalize infinite loop after manual scroll
+  function normalizePosition() {
+    if (!containerRef.current) return;
 
-      <div className="from-bg pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-75 bg-gradient-to-l to-transparent" />
+    const containerWidth = containerRef.current.scrollWidth / 2;
+    let current = x.get();
+
+    if (current <= -containerWidth) {
+      x.set(current + containerWidth);
+    }
+    if (current > 0) {
+      x.set(current - containerWidth);
+    }
+  }
+
+  return (
+    <div className="relative overflow-hidden py-8">
+      <div className="from-bg pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-16 bg-gradient-to-r to-transparent sm:w-24 lg:w-40" />
+      <div className="from-bg pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-16 bg-gradient-to-l to-transparent sm:w-24 lg:w-40" />
 
       <motion.div
         ref={containerRef}
-        className="flex gap-35"
+        className="flex cursor-grab gap-35 select-none active:cursor-grabbing sm:gap-24 lg:gap-24"
         style={{ x }}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onMouseDown={(e) => {
+          isDragging.current = true;
+          isPaused.current = true;
+          startX.current = e.clientX;
+          lastX.current = x.get();
+        }}
+        onMouseMove={(e) => {
+          if (!isDragging.current) return;
+          const delta = e.clientX - startX.current;
+          x.set(lastX.current + delta);
+          normalizePosition();
+        }}
+        onMouseUp={() => {
+          isDragging.current = false;
+          isPaused.current = false;
+        }}
+        onMouseLeave={() => {
+          isDragging.current = false;
+          isPaused.current = false;
+        }}
+        onTouchStart={(e) => {
+          isDragging.current = true;
+          isPaused.current = true;
+          startX.current = e.touches[0].clientX;
+          lastX.current = x.get();
+        }}
+        onTouchMove={(e) => {
+          if (!isDragging.current) return;
+          const delta = e.touches[0].clientX - startX.current;
+          x.set(lastX.current + delta);
+          normalizePosition();
+        }}
+        onTouchEnd={() => {
+          isDragging.current = false;
+          isPaused.current = false;
+        }}
       >
-        {testimonials.map((t, i) => (
-          <div key={i} className="w-80 flex-shrink-0">
-            <Testimonial
-              userName={t.userName}
-              testimonial={t.testimonial}
-              pfpUrl={t.pfpUrl}
-            />
-          </div>
-        ))}
-        {testimonials.map((t, i) => (
-          <div key={`duplicate-${i}`} className="w-80 flex-shrink-0">
-            <Testimonial
-              userName={t.userName}
-              testimonial={t.testimonial}
-              pfpUrl={t.pfpUrl}
-            />
+        {[...testimonials, ...testimonials].map((t, i) => (
+          <div key={i} className="w-72 flex-shrink-0 sm:w-80 lg:w-96">
+            <Testimonial {...t} />
           </div>
         ))}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
