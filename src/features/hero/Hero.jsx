@@ -45,7 +45,14 @@ const scooterEntrance = {
 
 function Hero() {
   function handleCTA() {
-    alert("cta clicked");
+    const section = document.getElementById("join");
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   }
 
   const mouseX = useMotionValue(0);
@@ -69,7 +76,7 @@ function Hero() {
     window.addEventListener("mousemove", handleMove);
 
     return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
+  }, [mouseX, mouseY]);
 
   return (
     <Section
@@ -82,7 +89,7 @@ function Hero() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="flex w-full flex-col items-center perspective-[1200px] md:flex-row"
+        className="flex w-full flex-col items-center perspective-[1200px] md:flex-row md:justify-center md:gap-16"
       >
         {/* CARD */}
 
