@@ -7,7 +7,7 @@ function ContactForm() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    department: "",
+    department: -1,
     subscribeNewsletter: true,
   });
 
@@ -68,9 +68,10 @@ function ContactForm() {
             name="department"
             value={form.department}
             onChange={handleChange}
+            className={form.department == -1 ? "option_default" : ""}
             required
           >
-            <option value="" disabled hidden>
+            <option value="-1" disabled hidden>
               Selecciona un departamento...
             </option>
             {departments.map((d) => (
